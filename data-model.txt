@@ -1,0 +1,40 @@
+
+// Telling sequelize that we're creating a new table/model that is called user and it has two columns that are both strings.
+
+var User = db.define('user', {
+    username: Sequelize.STRING,
+    password: Sequelize.STRING 
+});
+
+// Telling sequelize that we're creating a new table/model that is called Content and it has two columns that are both strings.
+
+var Content = db.define('content', {
+    url: Sequelize.STRING,
+    title: Sequelize.STRING
+});
+
+// Telling sequelize that we're creating a new table/model that is called vote and it has one column that is a boolean.
+
+Note: for all tables that are created, by default an ID is created as well as a createdAt timestamp and a updatedAt timestamp.
+var Vote = db.define('vote', {
+    upVote: Sequelize.BOOLEAN
+});
+
+//The first line is creating a connection between content and user, saying that content created is owned by to the user. 
+Basically, the User owns the content associated with it by his/her userID. So a userID will be associated with each user.
+The 2nd line is explaining that any one user may have more than one content row associated with him/her. So the userID will be the 
+foreign key used in content but the same userID may show up multiple times if they submit a lot of content.
+
+Content.belongsTo(User); // This will add a `setUser` function on content objects
+User.hasMany(Content); // This will add an `addContent` function on user objects
+
+//1st line: Creating the connection between User and content. The User is the source and the content is the target, 
+both ID's which are logged in Vote which has been renamed as UpVotes.
+2nd line: mimics the relationship on the first line but in reverse so it allows you to connect content to users via vote 
+(adding both content ID and User Id to the Vote table.
+
+User.belongsToMany(Content, {through: Vote, as: 'Upvotes'}); // This will add an `add`
+Content.belongsToMany(User, {through: Vote});
+
+syncs the info above with mysql and allows you to create the tables
+db.sync(); // Only needs to be used once!
